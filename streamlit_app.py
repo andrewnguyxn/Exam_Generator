@@ -8,6 +8,11 @@ if uploaded_file is not None:
     # Read the CSV file
     df = pd.read_xlsx(uploaded_file)
 
+sheet_names = df.sheet_names
+
+for sheet in len(sheet_names)
+    st.write(sheet)
+
 
 st.title("🎈 My new app")
 st.write(
