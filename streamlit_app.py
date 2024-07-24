@@ -10,7 +10,7 @@ if uploaded_file is not None:
 
 sheet_names = df.sheet_names
 
-for sheet in len(sheet_names)
+for sheet in len(sheet_names):
     st.write(sheet)
 
 
