@@ -1,2 +1,8 @@
 streamlit
 openpyxl
+zipfile
+streamlit_ext
+json
+re
+os
+io
