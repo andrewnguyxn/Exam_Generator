@@ -5,21 +5,27 @@ import streamlit_ext as ste
 import json
 import re
 import os
+from mitosheet.streamlit.v1 import spreadsheet
 from io import BytesIO
+from streamlit_option_menu import option_menu
 
 # Function to generate exams
 def generator(excel_file, number_of_questions):
     temp = []
-
+    count = 1
     for name, question in number_of_questions.items():
         # Read the specific sheet into a DataFrame
         data = pd.read_excel(excel_file, sheet_name=name)
 
-        #if 'Exam NNumber'
+        #if 'Exam Number'
         
         # Extract the specified number of random rows from the sheet
         extract = data.sample(question)
-        
+
+        #index = extract.index
+
+        #count += 1
+
         # Append the extracted rows to the list
         temp.append(extract)
     
@@ -33,6 +39,7 @@ def generator(excel_file, number_of_questions):
     
     return output, df_combined
 
+
 # Function for generating exams
 def generate_exams():
     st.title("Generate Exams")
@@ -45,6 +52,10 @@ def generate_exams():
     if uploaded_file is not None:
         excel_file = pd.ExcelFile(uploaded_file)
         sheet_names = excel_file.sheet_names
+
+        if st.checkbox("Edit file"):
+            data = pd.read_excel(excel_file)
+            spreadsheet(data)
 
         number_of_questions = {}
         for name in sheet_names:
@@ -148,6 +159,44 @@ def excel_to_json(data):
     
     return json_data
 
+# JSON Converter
+def json_converter():
+    st.title("Convert EXCEL files to JSON")
+    uploaded_file = st.file_uploader("Upload an EXCEL file to get started", type="xlsx")
+
+    if uploaded_file is not None:
+        st.session_state.generated_files = []
+        excel_file = pd.ExcelFile(uploaded_file)
+        sheet_names = excel_file.sheet_names
+
+        for name in sheet_names:
+            data = pd.read_excel(uploaded_file, sheet_name=name)
+            json_output = excel_to_json(data)
+            st.session_state.generated_files.append(json_output)
+
+        mem_zip = BytesIO()
+        with zipfile.ZipFile(mem_zip, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:
+            for id, json_output in enumerate(st.session_state.generated_files):
+                    
+                ste.download_button(
+                    label=f"Download {sheet_names[id]}",
+                    data=json_output,
+                    file_name=f'{sheet_names[id]}.json',
+                    mime='application/json',
+                    #key=f'download_{id}'
+                )
+                zf.writestr(f'{sheet_names[id]}.json', json_output.encode('utf-8'))
+        
+            mem_zip.seek(0)
+
+            ste.download_button(
+                label="Download All as ZIP",
+                data=mem_zip,
+                file_name='jsonfiles.zip',
+                mime='application/zip',
+                #key="download_all"
+            )
+
 
 # Function for home page
 def home():
@@ -156,14 +205,24 @@ def home():
 
 # Main function to set up the menu and handle navigation
 def main():
-    st.sidebar.title("Navigation")
-    menu_options = ["Home", "Generate Exams"]
-    choice = st.sidebar.selectbox("Go to", menu_options)
+    
+    with st.sidebar:
+        selected = option_menu(
+            menu_title = "Menu",
+            options = ["Home", "Exam Generator", "JSON Converter"],
+            icons = ["house"],
+            menu_icon="heart-eyes-fill",
+            default_index=0,
+        )
 
-    if choice == "Home":
+    if selected == "Home":
         home()
-    elif choice == "Generate Exams":
+
+    if selected == "Exam Generator":
         generate_exams()
+
+    if selected == "JSON Converter":
+        json_converter()
 
 if __name__ == "__main__":
     main()
