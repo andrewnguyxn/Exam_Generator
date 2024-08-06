@@ -1,5 +1,6 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
+from login import (login, create_user)
 
 from pages import (
     generate_exams,
@@ -7,22 +8,35 @@ from pages import (
     home
 )
 
-with st.sidebar:
-    selected = option_menu(
-        menu_title = "Menu",
-        options = ["Home", "Exam Generator", "JSON Converter"],
-        icons = ["house"],
-        menu_icon="heart-eyes-fill",
-        default_index=0,
-    )
+if 'authenticated' not in st.session_state:
+        st.session_state.authenticated = False
+if 'user' not in st.session_state:
+        st.session_state.user = None
 
-if selected == "Home":
-    home()
+if st.session_state.authenticated:
+    user = st.session_state.user
+    st.success(f"Welcome, {user['username']}! You are logged in as a {user['role']}.")
 
-if selected == "Exam Generator":
-    generate_exams()
+    with st.sidebar:
+        selected = option_menu(
+            menu_title = "Menu",
+            options = ["Home", "Exam Generator", "JSON Converter"],
+            icons = ["house"],
+            menu_icon="heart-eyes-fill",
+            default_index=0,
+        )
 
-if selected == "JSON Converter":
-    json_converter()
+    if selected == "Home":
+        home()
 
+    if selected == "Exam Generator":
+        generate_exams()
+
+    if selected == "JSON Converter":
+        json_converter()
+
+    
+
+else:
+     login()
 
