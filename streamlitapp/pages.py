@@ -114,7 +114,7 @@ def json_converter():
                     file_name=f'{name}.json',
                     mime='application/json',
                 )
-                zf.writestr(f'{name}.json', json_output.encode('utf-8'))
+                zf.writestr(f'{name}.json', json_output)
         
             mem_zip.seek(0)
 

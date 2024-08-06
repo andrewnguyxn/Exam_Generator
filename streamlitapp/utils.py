@@ -81,3 +81,4 @@ def excel_to_json(data):
     json_data = json.dumps(output_structure, indent=4, ensure_ascii=False)
     
     return json_data
+
