@@ -1,12 +1,18 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 from login import (login, create_user)
+from db import initialize_db
+from db import create_connection, get_user, add_user, initialize_db
 
 from pages import (
     generate_exams,
     json_converter,
     home
 )
+
+conn = create_connection('users.db')
+initialize_db(conn)
+conn.close()
 
 if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False
