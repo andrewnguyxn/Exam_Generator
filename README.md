@@ -1,1 +1,1 @@
-[![Open app](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://exam-gen-s8nmaarqk0c.streamlit.app/)
+[![Open app](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://examgenerator-crby7z5hc7mb6wsjg9wgpw.streamlit.app/)
