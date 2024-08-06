@@ -124,7 +124,7 @@ def json_converter():
                 file_name='jsonfiles.zip',
                 mime='application/zip',
             )
-        st.write(st.session_state)
+        #st.write(st.session_state)
     else:
         st.session_state.converted_files = []
 
