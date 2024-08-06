@@ -3,3 +3,4 @@ streamlit_ext
 openpyxl
 mitosheet
 streamlit_option_menu
+sqlite3
