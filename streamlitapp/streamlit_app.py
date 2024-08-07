@@ -1,18 +1,13 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-from login import (login, create_user)
-from db import initialize_db
-from db import create_connection, get_user, add_user, initialize_db
+from login import (login)
 
 from pages import (
+    json_converter_multiple,
     generate_exams,
     json_converter,
     home
 )
-
-conn = create_connection('users.db')
-initialize_db(conn)
-conn.close()
 
 if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False
@@ -26,7 +21,7 @@ if st.session_state.authenticated:
     with st.sidebar:
         selected = option_menu(
             menu_title = "Menu",
-            options = ["Home", "Exam Generator", "JSON Converter"],
+            options = ["Home", "Exam Generator", "JSON Converter", "Multiple JSON Converter"],
             icons = ["house"],
             menu_icon="heart-eyes-fill",
             default_index=0,
@@ -40,6 +35,9 @@ if st.session_state.authenticated:
 
     if selected == "JSON Converter":
         json_converter()
+
+    if selected == "Multiple JSON Converter":
+        json_converter_multiple()
 
     
 

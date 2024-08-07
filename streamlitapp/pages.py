@@ -91,7 +91,7 @@ def generate_exams():
 
 # JSON Converter
 def json_converter():
-    st.title("Convert EXCEL files to JSON")
+    st.title("Convert EXCEL file to JSON")
 
     uploaded_file_convert = st.file_uploader("Upload an EXCEL file to get started", type="xlsx")
 
@@ -116,17 +116,68 @@ def json_converter():
                 )
                 zf.writestr(f'{name}.json', json_output)
         
-            mem_zip.seek(0)
+        mem_zip.seek(0)
 
-            ste.download_button(
-                label="Download All as ZIP",
-                data=mem_zip.getvalue(),
-                file_name='jsonfiles.zip',
-                mime='application/zip',
-            )
+        ste.download_button(
+            label="Download All as ZIP",
+            data=mem_zip.getvalue(),
+            file_name='jsonfiles.zip',
+            mime='application/zip',
+        )
+
         #st.write(st.session_state)
     else:
         st.session_state.converted_files = []
+
+def json_converter_multiple():
+    st.title("Convert multiple EXCEL files to JSON")
+
+    uploaded_files = st.file_uploader("Choose EXCEL files", type="xlsx", accept_multiple_files=True)
+
+    if uploaded_files:
+        st.write(f"You have uploaded {len(uploaded_files)} files.")
+        st.session_state.converted_files_multiple = []
+
+        if st.button("Convert to JSON"):
+            for file in uploaded_files:
+                excel_file = pd.ExcelFile(file)
+                sheet_names = excel_file.sheet_names
+
+                converted_files = []
+                for name in sheet_names:
+                    data = pd.read_excel(file, sheet_name=name)
+                    json_output = excel_to_json(data)
+                    converted_files.append((json_output, name))
+                file_name = file.name.rsplit('.', 1)[0]
+                st.session_state.converted_files_multiple.append((converted_files, file_name))
+
+            for converted_files, file_name in st.session_state.converted_files_multiple:
+                st.write(f"Download options for {file_name}:")
+                mem_zip = BytesIO()
+                with zipfile.ZipFile(mem_zip, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:
+                    for json_output, sheet_name in converted_files:
+                        json_filename = f'{sheet_name}.json'
+                        ste.download_button(
+                            label=f"Download {json_filename}",
+                            data=json_output.encode('utf-8'),
+                            file_name=json_filename,
+                            mime='application/json'
+                        )
+                        zf.writestr(json_filename, json_output.encode('utf-8'))
+                mem_zip.seek(0)
+
+                ste.download_button(
+                    label=f"Download All as ZIP for {file_name}",
+                    data=mem_zip.getvalue(),
+                    file_name=f'{file_name}.zip',
+                    mime='application/zip'
+                )
+
+
+                
+
+
+    
 
 # Function for home page
 def home():
